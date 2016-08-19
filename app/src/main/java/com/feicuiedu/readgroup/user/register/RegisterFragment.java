@@ -60,6 +60,7 @@ public class RegisterFragment extends DialogFragment implements RegisterView {
         registerPresenter.onDestroy();
     }
 
+    // start-interface: RegisterView
     @Override public void startLoading() {
         btnConfirm.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
@@ -83,7 +84,7 @@ public class RegisterFragment extends DialogFragment implements RegisterView {
 
     @Override public void close() {
         dismiss();
-    }
+    } // end-interface: RegisterView
 
     @OnClick(R.id.button_confirm)
     public void register() {

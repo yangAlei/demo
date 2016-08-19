@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.feicuiedu.apphx.HxUserManager;
+import com.feicuiedu.apphx.model.HxUserManager;
 import com.feicuiedu.readgroup.user.login.LoginFragment;
 import com.feicuiedu.readgroup.user.register.RegisterFragment;
 

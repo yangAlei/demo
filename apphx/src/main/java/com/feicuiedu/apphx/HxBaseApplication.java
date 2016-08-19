@@ -3,6 +3,7 @@ package com.feicuiedu.apphx;
 
 import android.app.Application;
 
+import com.feicuiedu.apphx.model.HxUserManager;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.easeui.controller.EaseUI;

@@ -3,14 +3,16 @@ package com.feicuiedu.readgroup.user.login;
 
 import android.support.annotation.NonNull;
 
-import com.feicuiedu.apphx.HxLoginEvent;
-import com.feicuiedu.apphx.HxUserManager;
+import com.feicuiedu.apphx.model.HxUserManager;
 import com.feicuiedu.apphx.basemvp.MvpPresenter;
+import com.feicuiedu.apphx.model.event.HxErrorEvent;
+import com.feicuiedu.apphx.model.event.HxEventType;
+import com.feicuiedu.apphx.model.event.HxSimpleEvent;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class LoginPresenter extends MvpPresenter<LoginView>{
+class LoginPresenter extends MvpPresenter<LoginView> {
 
 
     @NonNull @Override protected LoginView getNullObject() {
@@ -22,16 +24,26 @@ public class LoginPresenter extends MvpPresenter<LoginView>{
         HxUserManager.getInstance().asyncLogin(username, password);
     }
 
+    @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(HxLoginEvent event) {
+    public void onEvent(HxSimpleEvent event) {
+
+        // 判断是否是登录成功事件
+        if (event.type != HxEventType.LOGIN) return;
+
         getView().stopLoading();
-        if (event.isSuccess()) {
-            getView().navigateToHome();
-        } else {
-            String msg = String.format("code: %s %s",
-                    event.getErrorCode(),
-                    event.getErrorMessage());
-            getView().showLoginFail(msg);
-        }
+        getView().navigateToHome();
     }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(HxErrorEvent event) {
+
+        // 判断是否是登录失败事件
+        if (event.type != HxEventType.LOGIN) return;
+
+        getView().stopLoading();
+        getView().showLoginFail(event.toString());
+    }
+
 }

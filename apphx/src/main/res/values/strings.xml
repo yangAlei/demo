@@ -1,3 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">App Hx</string>
+
+    <string name="hx_contact_error_delete_contact">删除好友失败：%s</string>
+    <string name="hx_contact_delete_contact">删除好友</string>
+    <string name="hx_contact_new_friends">添加新朋友</string>
+    <string name="hx_contact_invitation_and_notification">邀请和通知</string>
 </resources>

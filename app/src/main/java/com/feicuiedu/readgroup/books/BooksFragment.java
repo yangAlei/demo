@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.feicuiedu.apphx.HxUserManager;
+import com.feicuiedu.apphx.model.HxUserManager;
 import com.feicuiedu.readgroup.R;
 
 import butterknife.ButterKnife;

@@ -64,6 +64,7 @@ public class LoginFragment extends DialogFragment implements LoginView {
         loginPresenter.onDestroy();
     }
 
+    // start-interface: LoginView
     @Override public void startLoading() {
         btnConfirm.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
@@ -85,7 +86,7 @@ public class LoginFragment extends DialogFragment implements LoginView {
         Intent intent = new Intent(getContext(), HomeActivity.class);
         startActivity(intent);
         getActivity().finish();
-    }
+    } // end-interface: LoginView
 
     @OnClick(R.id.button_confirm)
     public void login() {

@@ -1,7 +1,10 @@
-package com.feicuiedu.apphx;
+package com.feicuiedu.apphx.model;
 
 import android.support.annotation.NonNull;
 
+import com.feicuiedu.apphx.model.event.HxErrorEvent;
+import com.feicuiedu.apphx.model.event.HxEventType;
+import com.feicuiedu.apphx.model.event.HxSimpleEvent;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
@@ -35,6 +38,9 @@ public class HxUserManager implements EMConnectionListener {
     private final EventBus eventBus;
     private final ExecutorService executorService;
 
+    // 当前登录用户的环信Id
+    private String currentUserId;
+
     private HxUserManager() {
         emClient = EMClient.getInstance();
         emClient.addConnectionListener(this);
@@ -61,7 +67,11 @@ public class HxUserManager implements EMConnectionListener {
 
     public boolean isLogin(){
         // 返回是否登录过环信，登录成功后，只要没调logout方法，这个方法的返回值一直是true
-        return emClient.isLoggedInBefore();
+        // emClient.isLoggedInBefore();
+
+        // emClient.getCurrentUser() 行为难以预测，所以自己写一个变量控制
+
+        return currentUserId != null;
     }
 
     /**
@@ -73,11 +83,11 @@ public class HxUserManager implements EMConnectionListener {
                 try {
                     emClient.createAccount(hxId, password);
                     Timber.d("RegisterHx success: %s", hxId);
-                    eventBus.post(new HxRegisterEvent());
+                    eventBus.post(new HxSimpleEvent(HxEventType.REGISTER));
 
                 } catch (HyphenateException e) {
                     Timber.e(e, "RegisterHx fail");
-                    eventBus.post(new HxRegisterEvent(e));
+                    eventBus.post(new HxErrorEvent(HxEventType.REGISTER, e));
                 }
             }
         };
@@ -92,12 +102,13 @@ public class HxUserManager implements EMConnectionListener {
         emClient.login(hxId, password, new EMCallBack() {
             @Override public void onSuccess() {
                 Timber.d("%s login success", hxId);
-                eventBus.post(new HxLoginEvent());
+                currentUserId = hxId;
+                eventBus.post(new HxSimpleEvent(HxEventType.LOGIN));
             }
 
             @Override public void onError(int code, String message) {
                 Timber.d("%s login error, code is %s.", hxId, code);
-                eventBus.post(new HxLoginEvent(code, message));
+                eventBus.post(new HxErrorEvent(HxEventType.LOGIN, code, message));
             }
 
             /* no-op */
@@ -109,7 +120,9 @@ public class HxUserManager implements EMConnectionListener {
     public void asyncLogout(){
         Runnable runnable = new Runnable() {
             @Override public void run() {
+                currentUserId = null;
                 emClient.logout(true);
+                HxContactManager.getInstance().reset();
             }
         };
 

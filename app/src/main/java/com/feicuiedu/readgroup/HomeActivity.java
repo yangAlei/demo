@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.feicuiedu.apphx.presentation.contact.HxContactListFragment;
 import com.feicuiedu.readgroup.books.BooksFragment;
 
 import butterknife.BindView;
@@ -32,7 +33,7 @@ public class HomeActivity extends AppCompatActivity implements ViewPager.OnPageC
                 case 0:
                     return new BooksFragment();
                 case 1:
-                    return new BooksFragment();
+                    return new HxContactListFragment();
                 case 2:
                     return new BooksFragment();
                 case 3:
