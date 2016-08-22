@@ -24,7 +24,6 @@ class LoginPresenter extends MvpPresenter<LoginView> {
         HxUserManager.getInstance().asyncLogin(username, password);
     }
 
-    @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(HxSimpleEvent event) {
 
@@ -35,7 +34,6 @@ class LoginPresenter extends MvpPresenter<LoginView> {
         getView().navigateToHome();
     }
 
-    @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(HxErrorEvent event) {
 

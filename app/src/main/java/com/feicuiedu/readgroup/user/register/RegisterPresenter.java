@@ -24,7 +24,6 @@ class RegisterPresenter extends MvpPresenter<RegisterView> {
         HxUserManager.getInstance().asyncRegister(username, password);
     }
 
-    @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(HxSimpleEvent event) {
 
@@ -36,7 +35,6 @@ class RegisterPresenter extends MvpPresenter<RegisterView> {
         getView().close();
     }
 
-    @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(HxErrorEvent event) {
 

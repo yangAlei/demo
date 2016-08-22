@@ -3,10 +3,14 @@ package com.feicuiedu.apphx.model;
 import com.feicuiedu.apphx.model.event.HxErrorEvent;
 import com.feicuiedu.apphx.model.event.HxEventType;
 import com.feicuiedu.apphx.model.event.HxRefreshContactEvent;
+import com.feicuiedu.apphx.model.event.HxSearchContactEvent;
+import com.feicuiedu.apphx.model.repository.ILocalUsersRepo;
+import com.feicuiedu.apphx.model.repository.IRemoteUsersRepo;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMContactListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMContactManager;
+import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.exceptions.HyphenateException;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,6 +40,9 @@ public class HxContactManager implements EMConnectionListener, EMContactListener
     private final ExecutorService executorService;
     private final EMContactManager emContactManager;
     private final EventBus eventBus;
+
+    private ILocalUsersRepo localUsersRepo;
+    private IRemoteUsersRepo remoteUsersRepo;
 
     private List<String> contacts;
 
@@ -146,6 +153,45 @@ public class HxContactManager implements EMConnectionListener, EMContactListener
         };
 
         executorService.submit(runnable);
+    }
+
+    public void searchContacts(final String username) {
+        Runnable runnable = new Runnable() {
+            @Override public void run() {
+                try {
+                    // 从应用服务器查询用户列表
+                    List<EaseUser> users = remoteUsersRepo.queryByName(username);
+                    // 将查询到的接口存储到本地数据仓库中
+                    localUsersRepo.save(users);
+
+                    ArrayList<String> contacts = new ArrayList<>();
+
+                    for (EaseUser easeUser : users) {
+                        contacts.add(easeUser.getUsername());
+                    }
+
+                    // 将结果发送给Presenter
+                    eventBus.post(new HxSearchContactEvent(contacts));
+                } catch (Exception e) {
+                    Timber.e(e, "searchContacts");
+                    eventBus.post(new HxSearchContactEvent(e.getMessage()));
+                }
+            }
+        };
+        executorService.submit(runnable);
+    }
+
+
+    @SuppressWarnings("UnusedReturnValue")
+    public HxContactManager initRemoteUsersRepo(IRemoteUsersRepo remoteUsersRepo) {
+        this.remoteUsersRepo = remoteUsersRepo;
+        return this;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public HxContactManager initLocalUsersRepo(ILocalUsersRepo localUsersRepo) {
+        this.localUsersRepo = localUsersRepo;
+        return this;
     }
 
     public void reset() {

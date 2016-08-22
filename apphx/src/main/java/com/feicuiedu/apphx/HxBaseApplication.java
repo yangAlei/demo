@@ -3,7 +3,8 @@ package com.feicuiedu.apphx;
 
 import android.app.Application;
 
-import com.feicuiedu.apphx.model.HxUserManager;
+import com.feicuiedu.apphx.model.repository.DefaultLocalUsersRepo;
+import com.feicuiedu.apphx.model.repository.MockRemoteUsersRepo;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.easeui.controller.EaseUI;
@@ -20,7 +21,10 @@ public class HxBaseApplication extends Application{
 
         initEaseUI();
 
-        HxUserManager.getInstance();
+        HxModuleInitializer.getInstance()
+                .setRemoteUsersRepo(new MockRemoteUsersRepo())
+                .setLocalUsersRepo(DefaultLocalUsersRepo.getInstance(this))
+                .init();
     }
 
 

@@ -1,5 +1,6 @@
-package com.feicuiedu.apphx.presentation.contact;
+package com.feicuiedu.apphx.presentation.contact.list;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.feicuiedu.apphx.R;
+import com.feicuiedu.apphx.presentation.contact.search.HxSearchContactActivity;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.ui.EaseContactListFragment;
 
@@ -107,7 +109,7 @@ public class HxContactListFragment extends EaseContactListFragment implements Hx
 
         clearSearch.setImageResource(R.drawable.hx_btn_clear_search); // 按钮: 清除搜索内容
 
-        Drawable searchIcon = getResources().getDrawable(R.drawable.hx_ic_search);
+        Drawable searchIcon = getResources().getDrawable(R.drawable.hx_ic_search_accent);
         searchIcon.setBounds(0, 0, searchIcon.getIntrinsicWidth(), searchIcon.getIntrinsicHeight());
         query.setCompoundDrawables(searchIcon, null, null, null); // 设置查询编辑框左侧的图标
 
@@ -119,7 +121,8 @@ public class HxContactListFragment extends EaseContactListFragment implements Hx
         View addContacts = headerView.findViewById(R.id.layout_add_contacts);
         addContacts.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
-
+                Intent intent = new Intent(getContext(), HxSearchContactActivity.class);
+                startActivity(intent);
             }
         });
 

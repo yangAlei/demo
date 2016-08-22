@@ -1,4 +1,4 @@
-package com.feicuiedu.apphx.presentation.contact;
+package com.feicuiedu.apphx.presentation.contact.list;
 
 
 import android.support.annotation.NonNull;
@@ -27,7 +27,6 @@ public class HxContactListPresenter extends MvpPresenter<HxContactListView> {
         HxContactManager.getInstance().deleteContact(hxId);
     }
 
-    @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(HxRefreshContactEvent event) {
 
@@ -37,7 +36,6 @@ public class HxContactListPresenter extends MvpPresenter<HxContactListView> {
         getView().refreshContacts();
     }
 
-    @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(HxErrorEvent event) {
 

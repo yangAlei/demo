@@ -5,4 +5,10 @@
     <string name="hx_contact_delete_contact">删除好友</string>
     <string name="hx_contact_new_friends">添加新朋友</string>
     <string name="hx_contact_invitation_and_notification">邀请和通知</string>
+    <string name="hx_contact_search_title">搜索好友</string>
+    <string name="hx_contact_search_hint">请输入用户名</string>
+    <string name="hx_contact_search_provider_authority">com.feicuiedu.apphx.HxSearchContactProvider</string>
+    <string name="hx_contact_clear_search_history">清除搜索历史</string>
+    <string name="hx_contact_error_search">搜索好友失败：%s</string>
+    <string name="hx_contact_add_contact">添加为好友</string>
 </resources>
