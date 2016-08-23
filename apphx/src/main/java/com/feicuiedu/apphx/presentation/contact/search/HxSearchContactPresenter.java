@@ -5,20 +5,41 @@ import android.support.annotation.NonNull;
 
 import com.feicuiedu.apphx.basemvp.MvpPresenter;
 import com.feicuiedu.apphx.model.HxContactManager;
+import com.feicuiedu.apphx.model.event.HxErrorEvent;
+import com.feicuiedu.apphx.model.event.HxEventType;
 import com.feicuiedu.apphx.model.event.HxSearchContactEvent;
+import com.feicuiedu.apphx.model.event.HxSimpleEvent;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class HxSearchContactPresenter extends MvpPresenter<HxSearchContactView> {
 
+    private final HxContactManager hxContactManager;
+
+    public HxSearchContactPresenter() {
+        hxContactManager = HxContactManager.getInstance();
+    }
+
     @NonNull @Override protected HxSearchContactView getNullObject() {
         return HxSearchContactView.NULL;
     }
 
-    public void searchContact(final String query) {
+    public void searchContact(String query) {
         getView().startLoading();
-        HxContactManager.getInstance().searchContacts(query);
+        hxContactManager.searchContacts(query);
+    }
+
+    public void sendInvite(String toHxId) {
+
+        // 如果已经是好友
+        if (hxContactManager.isFriend(toHxId)) {
+            getView().showAlreadyIsFriend();
+            return;
+        }
+
+        getView().startLoading();
+        hxContactManager.sendInvite(toHxId);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -30,5 +51,19 @@ public class HxSearchContactPresenter extends MvpPresenter<HxSearchContactView> 
         } else {
             getView().showSearchError(event.errorMessage);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(HxSimpleEvent e) {
+        if (e.type != HxEventType.SEND_INVITE) return;
+        getView().stopLoading();
+        getView().showSendInviteResult(true);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(HxErrorEvent e) {
+        if (e.type != HxEventType.SEND_INVITE) return;
+        getView().stopLoading();
+        getView().showSendInviteResult(false);
     }
 }

@@ -35,4 +35,10 @@
         <item name="android:textColor">@color/selector_common_text</item>
     </style>
 
+    <style name="InvitationButtonStyle" parent="@style/Widget.AppCompat.Button">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:background">@drawable/btn_invitation_bg</item>
+    </style>
+
 </resources>

@@ -2,6 +2,10 @@
 <resources>
 
     <dimen name="size_48">48dp</dimen>
+
+    <dimen name="lay_20">20dp</dimen>
+    <dimen name="lay_10">10dp</dimen>
+    <dimen name="lay_5">5dp</dimen>
     <dimen name="lay_4">4dp</dimen>
 
 </resources>

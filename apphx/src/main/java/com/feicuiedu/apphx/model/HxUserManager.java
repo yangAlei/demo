@@ -2,6 +2,7 @@ package com.feicuiedu.apphx.model;
 
 import android.support.annotation.NonNull;
 
+import com.feicuiedu.apphx.model.event.HxDisconnectEvent;
 import com.feicuiedu.apphx.model.event.HxErrorEvent;
 import com.feicuiedu.apphx.model.event.HxEventType;
 import com.feicuiedu.apphx.model.event.HxSimpleEvent;
@@ -20,8 +21,6 @@ import timber.log.Timber;
 
 /**
  * 环信用户基本功能管理：登录，注册，登出。
- *
- *
  */
 public class HxUserManager implements EMConnectionListener {
 
@@ -56,16 +55,16 @@ public class HxUserManager implements EMConnectionListener {
 
     @Override public void onDisconnected(int error) {
         Timber.d("onDisconnected error code: %d", error);
-        switch (error){
+        switch (error) {
             case EMError.USER_REMOVED: // 用户账号被删除
-                break;
             case EMError.USER_LOGIN_ANOTHER_DEVICE: // 用户在其它设备登录
+                setCurrentUserId(null);
+                eventBus.post(new HxDisconnectEvent(error));
                 break;
-            default:
         }
     } // end-interface: EMConnectionListener
 
-    public boolean isLogin(){
+    public boolean isLogin() {
         // 返回是否登录过环信，登录成功后，只要没调logout方法，这个方法的返回值一直是true
         // emClient.isLoggedInBefore();
 
@@ -77,7 +76,7 @@ public class HxUserManager implements EMConnectionListener {
     /**
      * 异步注册环信，只用于测试
      */
-    public void asyncRegister(@NonNull final String hxId, @NonNull final String password){
+    public void asyncRegister(@NonNull final String hxId, @NonNull final String password) {
         Runnable runnable = new Runnable() {
             @Override public void run() {
                 try {
@@ -98,11 +97,11 @@ public class HxUserManager implements EMConnectionListener {
     /**
      * 异步登录环信
      */
-    public void asyncLogin(@NonNull final String hxId, @NonNull final String password){
+    public void asyncLogin(@NonNull final String hxId, @NonNull final String password) {
         emClient.login(hxId, password, new EMCallBack() {
             @Override public void onSuccess() {
                 Timber.d("%s login success", hxId);
-                currentUserId = hxId;
+                setCurrentUserId(hxId);
                 eventBus.post(new HxSimpleEvent(HxEventType.LOGIN));
             }
 
@@ -117,15 +116,25 @@ public class HxUserManager implements EMConnectionListener {
         });
     }
 
-    public void asyncLogout(){
+    public void asyncLogout() {
         Runnable runnable = new Runnable() {
             @Override public void run() {
-                currentUserId = null;
                 emClient.logout(true);
-                HxContactManager.getInstance().reset();
+                setCurrentUserId(null);
             }
         };
 
         executorService.submit(runnable);
+    }
+
+    private void setCurrentUserId(String hxId) {
+        currentUserId = hxId;
+
+        if (hxId == null) {
+            HxContactManager.getInstance().reset();
+        } else {
+            HxContactManager.getInstance().setCurrentUser(hxId);
+        }
+
     }
 }

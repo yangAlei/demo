@@ -3,6 +3,7 @@ package com.feicuiedu.apphx;
 
 import com.feicuiedu.apphx.model.HxContactManager;
 import com.feicuiedu.apphx.model.HxUserManager;
+import com.feicuiedu.apphx.model.repository.ILocalInviteRepo;
 import com.feicuiedu.apphx.model.repository.ILocalUsersRepo;
 import com.feicuiedu.apphx.model.repository.IRemoteUsersRepo;
 
@@ -24,6 +25,8 @@ public class HxModuleInitializer {
 
     private ILocalUsersRepo localUsersRepo;
 
+    private ILocalInviteRepo localInviteMessageRepo;
+
     public HxModuleInitializer setRemoteUsersRepo(IRemoteUsersRepo remoteUsersRepo) {
         this.remoteUsersRepo = remoteUsersRepo;
         return this;
@@ -31,6 +34,11 @@ public class HxModuleInitializer {
 
     public HxModuleInitializer setLocalUsersRepo(ILocalUsersRepo localUsersRepo) {
         this.localUsersRepo = localUsersRepo;
+        return this;
+    }
+
+    public HxModuleInitializer setLocalInviteRepo(ILocalInviteRepo localInviteMessageRepo) {
+        this.localInviteMessageRepo = localInviteMessageRepo;
         return this;
     }
 
@@ -48,6 +56,7 @@ public class HxModuleInitializer {
 
         HxContactManager.getInstance()
                 .initLocalUsersRepo(localUsersRepo)
-                .initRemoteUsersRepo(remoteUsersRepo);
+                .initRemoteUsersRepo(remoteUsersRepo)
+                .initLocalInviteRepo(localInviteMessageRepo);
     }
 }

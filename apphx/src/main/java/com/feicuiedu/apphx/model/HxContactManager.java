@@ -1,9 +1,13 @@
 package com.feicuiedu.apphx.model;
 
+import com.feicuiedu.apphx.model.entity.InviteMessage;
 import com.feicuiedu.apphx.model.event.HxErrorEvent;
 import com.feicuiedu.apphx.model.event.HxEventType;
 import com.feicuiedu.apphx.model.event.HxRefreshContactEvent;
+import com.feicuiedu.apphx.model.event.HxRefreshInviteEvent;
 import com.feicuiedu.apphx.model.event.HxSearchContactEvent;
+import com.feicuiedu.apphx.model.event.HxSimpleEvent;
+import com.feicuiedu.apphx.model.repository.ILocalInviteRepo;
 import com.feicuiedu.apphx.model.repository.ILocalUsersRepo;
 import com.feicuiedu.apphx.model.repository.IRemoteUsersRepo;
 import com.hyphenate.EMConnectionListener;
@@ -43,8 +47,10 @@ public class HxContactManager implements EMConnectionListener, EMContactListener
 
     private ILocalUsersRepo localUsersRepo;
     private IRemoteUsersRepo remoteUsersRepo;
+    private ILocalInviteRepo localInviteRepo;
 
     private List<String> contacts;
+    private String currentUserId;
 
     private HxContactManager() {
         executorService = Executors.newSingleThreadExecutor();
@@ -96,23 +102,38 @@ public class HxContactManager implements EMConnectionListener, EMContactListener
             contacts.remove(hxId);
             notifyContactsRefresh();
         }
+
+        localInviteRepo.delete(hxId);
+        notifyInviteRefresh();
     }
 
     /**
      * 收到好友邀请
+     * <p/>
+     * A 向 B发送邀请时，B的这个方法会被调用
      *
      * @param hxId   环信ID
      * @param reason 理由
      */
     @Override public void onContactInvited(String hxId, String reason) {
         Timber.d("onContactInvited %s, reason: %s", hxId, reason);
+
+        InviteMessage inviteMessage = new InviteMessage(hxId, currentUserId, InviteMessage.Status.RAW);
+        localInviteRepo.save(inviteMessage);
+        notifyInviteRefresh();
     }
 
     /**
      * 好友请求被同意
+     * <p/>
+     * B 同意 A的好友邀请时，A的这个方法会被调用
      */
     @Override public void onContactAgreed(String hxId) {
         Timber.d("onContactAgreed %s", hxId);
+
+        InviteMessage inviteMessage = new InviteMessage(hxId, currentUserId, InviteMessage.Status.REMOTE_ACCEPTED);
+        localInviteRepo.save(inviteMessage);
+        notifyInviteRefresh();
     }
 
     /**
@@ -122,6 +143,12 @@ public class HxContactManager implements EMConnectionListener, EMContactListener
     @Override public void onContactRefused(String hxId) {
         Timber.d("onContactRefused %s", hxId);
     } // end-interface: EMContactListener
+
+
+    public boolean isFriend(String hxId) {
+        return contacts != null && contacts.contains(hxId);
+    }
+
 
     public void getContacts() {
         if (contacts != null) {
@@ -154,6 +181,71 @@ public class HxContactManager implements EMConnectionListener, EMContactListener
 
         executorService.submit(runnable);
     }
+
+    public void sendInvite(final String hxId) {
+        Runnable runnable = new Runnable() {
+            @Override public void run() {
+                try {
+                    emContactManager.addContact(hxId, "");
+                    eventBus.post(new HxSimpleEvent(HxEventType.SEND_INVITE));
+                } catch (HyphenateException e) {
+                    Timber.e(e, "sendInvite");
+                    eventBus.post(new HxErrorEvent(HxEventType.SEND_INVITE, e));
+                }
+            }
+        };
+
+        executorService.submit(runnable);
+    }
+
+    public void acceptInvite(final InviteMessage invite) {
+        Runnable runnable = new Runnable() {
+            @Override public void run() {
+                try {
+                    emContactManager.acceptInvitation(invite.getFromHxId());
+
+                    invite.setStatus(InviteMessage.Status.ACCEPTED);
+                    localInviteRepo.save(invite);
+
+                    eventBus.post(new HxSimpleEvent(HxEventType.ACCEPT_INVITE));
+                } catch (HyphenateException e) {
+                    Timber.e(e, "acceptInvite");
+                    eventBus.post(new HxErrorEvent(HxEventType.ACCEPT_INVITE, e));
+                }
+            }
+        };
+
+        executorService.submit(runnable);
+    }
+
+    public void refuseInvite(final InviteMessage invite) {
+        Runnable runnable = new Runnable() {
+            @Override public void run() {
+                try {
+                    emContactManager.declineInvitation(invite.getFromHxId());
+
+                    invite.setStatus(InviteMessage.Status.REFUSED);
+                    localInviteRepo.save(invite);
+
+                    eventBus.post(new HxSimpleEvent(HxEventType.REFUSE_INVITE));
+                } catch (HyphenateException e) {
+                    Timber.e(e, "declineInvite");
+                    eventBus.post(new HxErrorEvent(HxEventType.REFUSE_INVITE, e));
+                }
+            }
+        };
+
+        executorService.submit(runnable);
+    }
+
+    public void getInvites() {
+        executorService.submit(new Runnable() {
+            @Override public void run() {
+                notifyInviteRefresh();
+            }
+        });
+    }
+
 
     public void searchContacts(final String username) {
         Runnable runnable = new Runnable() {
@@ -194,8 +286,21 @@ public class HxContactManager implements EMConnectionListener, EMContactListener
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
+    public HxContactManager initLocalInviteRepo(ILocalInviteRepo localInviteRepo) {
+        this.localInviteRepo = localInviteRepo;
+        return this;
+    }
+
+    public void setCurrentUser(String hxId) {
+        this.currentUserId = hxId;
+        localInviteRepo.setCurrentUser(hxId);
+    }
+
     public void reset() {
         contacts = null;
+        currentUserId = null;
+        localInviteRepo.setCurrentUser(null);
     }
 
     private void asyncGetContactsFromServer() {
@@ -223,5 +328,10 @@ public class HxContactManager implements EMConnectionListener, EMContactListener
         }
 
         eventBus.post(new HxRefreshContactEvent(currentContacts));
+    }
+
+    private void notifyInviteRefresh() {
+        List<InviteMessage> messages = localInviteRepo.getAll();
+        eventBus.post(new HxRefreshInviteEvent(messages));
     }
 }

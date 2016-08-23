@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -43,6 +44,9 @@ public class LoginFragment extends DialogFragment implements LoginView {
 
     @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // 设置对话框无标题栏
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 

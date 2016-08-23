@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.feicuiedu.apphx.R;
+import com.feicuiedu.apphx.presentation.contact.invitation.HxInvitationsActivity;
 import com.feicuiedu.apphx.presentation.contact.search.HxSearchContactActivity;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.ui.EaseContactListFragment;
@@ -130,7 +131,8 @@ public class HxContactListFragment extends EaseContactListFragment implements Hx
         View notifications = headerView.findViewById(R.id.layout_notifications);
         notifications.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
-
+                Intent intent = new Intent(getContext(), HxInvitationsActivity.class);
+                startActivity(intent);
             }
         });
 

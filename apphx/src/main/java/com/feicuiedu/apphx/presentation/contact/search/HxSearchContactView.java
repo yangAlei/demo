@@ -18,6 +18,10 @@ public interface HxSearchContactView extends MvpView{
 
     void showSearchError(String error);
 
+    void showSendInviteResult(boolean success);
+
+    void showAlreadyIsFriend();
+
     HxSearchContactView NULL = new HxSearchContactView() {
         @Override public void startLoading() {
         }
@@ -29,6 +33,12 @@ public interface HxSearchContactView extends MvpView{
         }
 
         @Override public void showSearchError(String error) {
+        }
+
+        @Override public void showSendInviteResult(boolean success) {
+        }
+
+        @Override public void showAlreadyIsFriend() {
         }
     };
 }
