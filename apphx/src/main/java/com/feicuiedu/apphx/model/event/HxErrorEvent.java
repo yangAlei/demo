@@ -18,9 +18,9 @@ public final class HxErrorEvent {
 
     public final HxEventType type;
 
-    public final int errorCode;
+    private final int errorCode;
 
-    public final String errorMessage;
+    private final String errorMessage;
 
     public HxErrorEvent(HxEventType type, HyphenateException e) {
         this.type = type;

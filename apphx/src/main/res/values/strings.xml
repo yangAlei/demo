@@ -22,6 +22,11 @@
     <string name="hx_contact_invitation_refuse">拒绝</string>
     <string name="hx_contact_action_fail">操作失败</string>
 
+    <string name="hx_chat_title">聊天</string>
+    <string name="hx_chat_video_call">视频通话</string>
+    <string name="hx_chat_audio_call">语音通话</string>
+    <string name="hx_chat_title_location_info">位置信息</string>
+
     <string name="hx_error_account_conflict">账号冲突！</string>
     <string name="hx_error_account_removed">账号被删除！</string>
 </resources>

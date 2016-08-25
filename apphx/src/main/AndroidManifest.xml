@@ -41,6 +41,7 @@
         <!-- 搜索联系人页面 -->
         <activity android:name=".presentation.contact.search.HxSearchContactActivity"
                   android:launchMode="singleTop"
+                  android:screenOrientation="portrait"
                   android:theme="@style/HxSearchTheme">
             <meta-data android:name="android.app.searchable"
                        android:resource="@xml/searchable"/>
@@ -51,7 +52,36 @@
 
         <!-- 邀请和通知页面-->
         <activity android:name=".presentation.contact.invitation.HxInvitationsActivity"
-                  android:theme="@style/HxSearchTheme"/>
+                  android:screenOrientation="portrait"
+                  android:theme="@style/HxAppTheme"/>
+
+        <!-- 聊天页面 -->
+        <activity android:name=".presentation.chat.HxChatActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/HxAppTheme"/>
+
+        <!-- 显示下载大图页面 -->
+        <activity
+            android:name="com.hyphenate.easeui.ui.EaseShowBigImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/horizontal_slide" />
+
+        <!-- *********地图相关功能:开始********* -->
+        <!-- 地图页面，用于分享位置-->
+        <activity android:name="com.hyphenate.easeui.ui.EaseBaiduMapActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/HxAppTheme"/>
+
+        <!-- 百度地图所需的service -->
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="P1IAcH7dXxo4P6dFwxkeEb0KHNBdi2Sf" />
+        <!-- *********地图相关功能:结束********* -->
 
         <!-- 搜索建议内容提供者 -->
         <provider android:name=".presentation.contact.search.HxSearchContactProvider"

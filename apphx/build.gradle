@@ -8,7 +8,7 @@ android {
     defaultConfig {
         minSdkVersion 15
         //noinspection OldTargetApi
-        targetSdkVersion 23
+        targetSdkVersion 22 // 注意，如果设置成23，需要处理运行时权限
         versionCode 1
         versionName "1.0"
     }

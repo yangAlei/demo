@@ -140,5 +140,4 @@ public class HxContactListFragment extends EaseContactListFragment implements Hx
 
     }
 
-
 }
