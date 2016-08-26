@@ -12,8 +12,10 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.feicuiedu.apphx.R;
+import com.feicuiedu.apphx.presentation.chat.HxChatActivity;
 import com.feicuiedu.apphx.presentation.contact.invitation.HxInvitationsActivity;
 import com.feicuiedu.apphx.presentation.contact.search.HxSearchContactActivity;
+import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.ui.EaseContactListFragment;
 
@@ -32,6 +34,16 @@ public class HxContactListFragment extends EaseContactListFragment implements Hx
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 此方法要在 onActivityCreated 之前调用才有效
+        setContactListItemClickListener(new EaseContactListItemClickListener() {
+            @Override public void onListItemClicked(EaseUser user) {
+                Intent intent = HxChatActivity.getStartIntent(getContext(), EaseConstant.CHATTYPE_SINGLE, user.getUsername());
+                startActivity(intent);
+            }
+        });
+
+
         presenter = new HxContactListPresenter();
         presenter.onCreate();
     }

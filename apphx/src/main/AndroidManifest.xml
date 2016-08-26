@@ -20,6 +20,7 @@
     <!-- *********环信需要的权限:结束********* -->
 
     <application
+        android:name=".HxBaseApplication"
         android:label="@string/app_name">
 
         <!-- *********环信相关配置:开始********* -->
@@ -64,7 +65,7 @@
         <activity
             android:name="com.hyphenate.easeui.ui.EaseShowBigImageActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/horizontal_slide" />
+            android:theme="@style/horizontal_slide"/>
 
         <!-- *********地图相关功能:开始********* -->
         <!-- 地图页面，用于分享位置-->
@@ -76,17 +77,20 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote" />
+            android:process=":remote"/>
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="P1IAcH7dXxo4P6dFwxkeEb0KHNBdi2Sf" />
+            android:value="P1IAcH7dXxo4P6dFwxkeEb0KHNBdi2Sf"/>
         <!-- *********地图相关功能:结束********* -->
 
         <!-- 搜索建议内容提供者 -->
         <provider android:name=".presentation.contact.search.HxSearchContactProvider"
                   android:authorities="@string/hx_contact_search_provider_authority"
                   android:exported="false"/>
+
+
+        <service android:name=".HxMainService"/>
 
     </application>
 

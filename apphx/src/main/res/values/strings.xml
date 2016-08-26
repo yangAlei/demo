@@ -27,6 +27,11 @@
     <string name="hx_chat_audio_call">语音通话</string>
     <string name="hx_chat_title_location_info">位置信息</string>
 
+    <string name="hx_conversation_delete_conversation">删除会话</string>
+    <string name="hx_conversation_delete_conversation_and_message">删除会话和消息</string>
+
     <string name="hx_error_account_conflict">账号冲突！</string>
     <string name="hx_error_account_removed">账号被删除！</string>
+
+    <string name="hx_notify_expression">[表情]</string>
 </resources>

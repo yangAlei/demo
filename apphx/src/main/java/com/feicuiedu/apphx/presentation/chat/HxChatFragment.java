@@ -39,6 +39,11 @@ public class HxChatFragment extends EaseChatFragment implements EaseChatFragment
         customUi();
     }
 
+    @Override public void onPause() {
+        super.onPause();
+        hideSoftKeyboard();
+    }
+
     @Override protected void registerExtendMenuItem() {
         // 替换EaseUI自带的图标
         itemdrawables[0] = R.drawable.btn_capture_picture;

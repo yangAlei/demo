@@ -1,7 +1,6 @@
 package com.feicuiedu.readgroup;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,12 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.feicuiedu.apphx.presentation.chat.HxChatActivity;
 import com.feicuiedu.apphx.presentation.contact.list.HxContactListFragment;
+import com.feicuiedu.apphx.presentation.conversation.HxConversationListFragment;
 import com.feicuiedu.readgroup.books.BooksFragment;
-import com.hyphenate.easeui.EaseConstant;
-import com.hyphenate.easeui.domain.EaseUser;
-import com.hyphenate.easeui.ui.EaseContactListFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,18 +34,9 @@ public class HomeActivity extends AppCompatActivity implements ViewPager.OnPageC
                 case 0:
                     return new BooksFragment();
                 case 1:
-                    HxContactListFragment contactListFragment = new HxContactListFragment();
-
-                    contactListFragment.setContactListItemClickListener(new EaseContactListFragment.EaseContactListItemClickListener() {
-                        @Override public void onListItemClicked(EaseUser user) {
-                            Intent intent = HxChatActivity.getStartIntent(HomeActivity.this, EaseConstant.CHATTYPE_SINGLE, user.getUsername());
-                            startActivity(intent);
-                        }
-                    });
-
-                    return contactListFragment;
+                    return new HxContactListFragment();
                 case 2:
-                    return new BooksFragment();
+                    return new HxConversationListFragment();
                 case 3:
                     return new BooksFragment();
                 default:
