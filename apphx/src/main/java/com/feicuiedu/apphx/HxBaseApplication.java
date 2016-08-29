@@ -30,17 +30,20 @@ public class HxBaseApplication extends Application {
             initEaseUI();
 
             // 初始化AppHx模块
-            HxModuleInitializer.getInstance()
-                    .setRemoteUsersRepo(new MockRemoteUsersRepo())
-                    .setLocalUsersRepo(DefaultLocalUsersRepo.getInstance(this))
-                    .setLocalInviteRepo(DefaultLocalInviteRepo.getInstance(this))
-                    .init();
+            initHxModule(HxModuleInitializer.getInstance());
 
             // 启动后台服务，处理通知等
             Intent service = new Intent(this, HxMainService.class);
             startService(service);
         }
 
+    }
+
+    public void initHxModule(HxModuleInitializer initializer) {
+        initializer.setRemoteUsersRepo(new MockRemoteUsersRepo())
+                .setLocalUsersRepo(DefaultLocalUsersRepo.getInstance(this))
+                .setLocalInviteRepo(DefaultLocalInviteRepo.getInstance(this))
+                .init();
     }
 
 

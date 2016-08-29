@@ -76,6 +76,7 @@ public class HxUserManager implements EMConnectionListener {
     /**
      * 异步注册环信，只用于测试
      */
+    @SuppressWarnings("unused")
     public void asyncRegister(@NonNull final String hxId, @NonNull final String password) {
         Runnable runnable = new Runnable() {
             @Override public void run() {

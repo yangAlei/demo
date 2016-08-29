@@ -3,11 +3,9 @@ package com.feicuiedu.readgroup.user.register;
 
 import android.support.annotation.NonNull;
 
-import com.feicuiedu.apphx.model.HxUserManager;
 import com.feicuiedu.apphx.basemvp.MvpPresenter;
-import com.feicuiedu.apphx.model.event.HxErrorEvent;
-import com.feicuiedu.apphx.model.event.HxEventType;
-import com.feicuiedu.apphx.model.event.HxSimpleEvent;
+import com.feicuiedu.readgroup.network.BombClient;
+import com.feicuiedu.readgroup.network.event.RegisterEvent;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -21,27 +19,18 @@ class RegisterPresenter extends MvpPresenter<RegisterView> {
 
     public void register(@NonNull String username, @NonNull String password) {
         getView().startLoading();
-        HxUserManager.getInstance().asyncRegister(username, password);
+        BombClient.getInstance().asyncRegister(username, password);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(HxSimpleEvent event) {
-
-        // 判断是否是注册事件
-        if (event.type != HxEventType.REGISTER) return;
-
+    public void onEvent(RegisterEvent event) {
         getView().stopLoading();
-        getView().showRegisterSuccess();
-        getView().close();
-    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(HxErrorEvent event) {
-
-        // 判断是否是注册事件
-        if (event.type != HxEventType.REGISTER) return;
-
-        getView().stopLoading();
-        getView().showRegisterFail(event.toString());
+        if (event.success) {
+            getView().showRegisterSuccess();
+            getView().close();
+        } else {
+            getView().showRegisterFail(event.errorMessage);
+        }
     }
 }
