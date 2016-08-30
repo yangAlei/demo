@@ -8,10 +8,13 @@ import java.util.List;
 
 public interface HxInvitationsView extends MvpView{
 
+    // 更新数据并刷新列表
     void refreshInvitations(List<InviteMessage> messages);
 
+    // 刷新列表
     void refreshInvitations();
 
+    // 显示“同意”或“拒绝”邀请的操作失败
     void showActionFail();
 
 

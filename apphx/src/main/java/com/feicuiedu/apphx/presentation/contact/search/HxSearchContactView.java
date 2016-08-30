@@ -2,6 +2,7 @@ package com.feicuiedu.apphx.presentation.contact.search;
 
 
 import com.feicuiedu.apphx.basemvp.MvpView;
+import com.hyphenate.easeui.domain.EaseUser;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface HxSearchContactView extends MvpView{
     /**
      * @param contacts 环信Id的集合
      */
-    void showContacts(List<String> contacts);
+    void showContacts(List<EaseUser> contacts);
 
     void showSearchError(String error);
 
@@ -29,7 +30,7 @@ public interface HxSearchContactView extends MvpView{
         @Override public void stopLoading() {
         }
 
-        @Override public void showContacts(List<String> contacts) {
+        @Override public void showContacts(List<EaseUser> contacts) {
         }
 
         @Override public void showSearchError(String error) {

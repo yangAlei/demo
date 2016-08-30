@@ -1,6 +1,7 @@
 package com.feicuiedu.apphx.presentation.contact.invitation;
 
 
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.feicuiedu.apphx.Preconditions;
 import com.feicuiedu.apphx.R;
 import com.feicuiedu.apphx.model.entity.InviteMessage;
 import com.hyphenate.easeui.utils.EaseUserUtils;
@@ -16,12 +18,18 @@ import com.hyphenate.easeui.utils.EaseUserUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 邀请信息列表适配器。
+ * <p/>
+ * 对于单条邀请信息，有同意/拒绝按钮，这两个按钮的点击事件不由adapter自身处理，
+ * 而是通过{@link OnHandleInvitationListener}监听器传递给实现此监听接口的界面来处理。
+ */
 class HxInvitationsAdapter extends BaseAdapter {
 
     private final List<InviteMessage> messages;
     private final OnHandleInvitationListener listener;
 
-    public HxInvitationsAdapter(OnHandleInvitationListener listener) {
+    public HxInvitationsAdapter(@NonNull OnHandleInvitationListener listener) {
         this.messages = new ArrayList<>();
         this.listener = listener;
     }
@@ -40,18 +48,14 @@ class HxInvitationsAdapter extends BaseAdapter {
 
     @Override public View getView(int position, View convertView, ViewGroup parent) {
 
-        if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_invitation, parent, false);
-            ViewHolder viewHolder = new ViewHolder(convertView);
-            convertView.setTag(viewHolder);
-        }
+        // 如果有convertView，则重用convertView，否则创建一个新视图
+        View itemView = (convertView != null) ?
+                convertView : createItemView(parent);
 
-        ViewHolder viewHolder = (ViewHolder) convertView.getTag();
-        InviteMessage inviteMessage = messages.get(position);
-        viewHolder.bind(inviteMessage);
+        // 根据position更新视图上的数据
+        updateItemView(position, itemView);
 
-        return convertView;
+        return itemView;
     }
 
     public void setData(List<InviteMessage> data) {
@@ -60,20 +64,37 @@ class HxInvitationsAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public interface OnHandleInvitationListener {
-        void onAccept(InviteMessage inviteMessage);
+    private View createItemView(ViewGroup parent) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_invitation, parent, false);
+        ViewHolder viewHolder = new ViewHolder(itemView);
+        itemView.setTag(viewHolder);
 
-        void onRefuse(InviteMessage inviteMessage);
+        return itemView;
+    }
+
+    private void updateItemView(int position, View itemView) {
+        ViewHolder viewHolder = (ViewHolder) itemView.getTag();
+        InviteMessage inviteMessage = messages.get(position);
+        viewHolder.bind(inviteMessage);
+    }
+
+    public interface OnHandleInvitationListener {
+        // 当点击“同意”时
+        void onAccept(@NonNull InviteMessage inviteMessage);
+
+        // 当点击“拒绝”时
+        void onRefuse(@NonNull InviteMessage inviteMessage);
     }
 
     private class ViewHolder implements View.OnClickListener {
 
-        final ImageView ivAvatar;
-        final Button btnAgree;
-        final Button btnRefuse;
-        final TextView tvUsername;
-        final TextView tvStatus;
-        final TextView tvInfo;
+        final ImageView ivAvatar; // 用户头像
+        final Button btnAgree; // 同意按钮
+        final Button btnRefuse; // 拒绝按钮
+        final TextView tvUsername; // 用户名
+        final TextView tvStatus; // 消息状态(“已同意”，“已拒绝”)
+        final TextView tvInfo; // 消息内容，为了简化设为固定值
 
         private InviteMessage inviteMessage;
 
@@ -95,9 +116,7 @@ class HxInvitationsAdapter extends BaseAdapter {
         }
 
         @Override public void onClick(View v) {
-            if (inviteMessage == null) {
-                throw new NullPointerException();
-            }
+            Preconditions.checkNotNull(inviteMessage);
 
             if (v.getId() == R.id.button_agree) {
                 listener.onAccept(inviteMessage);
@@ -138,6 +157,7 @@ class HxInvitationsAdapter extends BaseAdapter {
                     throw new RuntimeException("Wrong branch!");
             }
 
+            // 使用EaseUI工具类，设置用户名和头像
             EaseUserUtils.setUserNick(inviteMessage.getFromHxId(), tvUsername);
             EaseUserUtils.setUserAvatar(ivAvatar.getContext(), inviteMessage.getFromHxId(), ivAvatar);
         }

@@ -32,13 +32,19 @@ public class DefaultLocalUsersRepo implements ILocalUsersRepo {
     }
 
 
-    @Override public void save(@NonNull List<EaseUser> userList) {
+    @Override public void saveAll(@NonNull List<EaseUser> userList) {
 
         SharedPreferences.Editor editor = preferences.edit();
 
         for (EaseUser user : userList) {
             editor.putString(user.getUsername(), gson.toJson(user));
         }
+        editor.apply();
+    }
+
+    @Override public void save(@NonNull EaseUser easeUser) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(easeUser.getUsername(), gson.toJson(easeUser));
         editor.apply();
     }
 

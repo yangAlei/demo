@@ -22,7 +22,10 @@ public interface ILocalUsersRepo {
     /**
      * @param userList 要保存的用户列表
      */
-    void save(@NonNull List<EaseUser> userList);
+    void saveAll(@NonNull List<EaseUser> userList);
+
+    void save(@NonNull EaseUser easeUser);
+
 
     /**
      * @param hxId 环信id

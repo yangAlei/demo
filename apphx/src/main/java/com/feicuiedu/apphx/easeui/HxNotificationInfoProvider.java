@@ -7,12 +7,17 @@ import android.content.Intent;
 import com.feicuiedu.apphx.R;
 import com.feicuiedu.apphx.presentation.chat.HxChatActivity;
 import com.hyphenate.chat.EMMessage;
-import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.controller.EaseUI;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.model.EaseNotifier;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 
+/**
+ * 参考<a href="http://docs.easemob.com/im/200androidclientintegration/135easeuiuseguide">EaseUI 使用指南</a>中的：
+ * 设置通知栏内容提供者。
+ * <p/>
+ * 注意此处的Provider不是ContentProvider，只是对EaseUI进行配置的一个接口。
+ */
 public class HxNotificationInfoProvider implements EaseNotifier.EaseNotificationInfoProvider {
 
     private final Context appContext;
@@ -45,7 +50,7 @@ public class HxNotificationInfoProvider implements EaseNotifier.EaseNotification
         // 设置通知的标题，这里使用默认
 
         EaseUser easeUser = getEaseUser(message.getUserName());
-        return easeUser == null? message.getFrom(): easeUser.getNick();
+        return easeUser == null ? message.getFrom() : easeUser.getNick();
     }
 
     @Override public int getSmallIcon(EMMessage message) {
@@ -55,7 +60,7 @@ public class HxNotificationInfoProvider implements EaseNotifier.EaseNotification
 
     @Override public Intent getLaunchIntent(EMMessage message) {
         //设置点击通知栏跳转事件
-        return HxChatActivity.getStartIntent(appContext, EaseConstant.CHATTYPE_SINGLE, message.getUserName());
+        return HxChatActivity.getStartIntent(appContext, message.getUserName());
     }
 
     private EaseUser getEaseUser(String hxId) {

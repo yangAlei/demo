@@ -11,13 +11,13 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -27,8 +27,6 @@ import com.hyphenate.easeui.widget.EaseContactList;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import timber.log.Timber;
 
 /**
  * 搜索联系人页面
@@ -48,10 +46,12 @@ public class HxSearchContactActivity extends AppCompatActivity
 
     private HxSearchContactPresenter presenter;
 
-    private String selectedHxId;
-
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        suggestions = new SearchRecentSuggestions(this,
+                HxSearchContactProvider.AUTHORITY, HxSearchContactProvider.MODE);
+
         setContentView(R.layout.activity_hx_search_contact);
 
         presenter = new HxSearchContactPresenter();
@@ -64,30 +64,23 @@ public class HxSearchContactActivity extends AppCompatActivity
     @Override public void onContentChanged() {
         super.onContentChanged();
 
-        suggestions = new SearchRecentSuggestions(this,
-                HxSearchContactProvider.AUTHORITY, HxSearchContactProvider.MODE);
+        initToolbar();
+        initContactList();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        //noinspection ConstantConditions
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        // 搜索时的进度条
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-
-        // 初始化联系人列表
-        easeContactList = (EaseContactList) findViewById(R.id.ease_contact_list);
-        //noinspection ConstantConditions
-        listView = easeContactList.getListView();
-        contactList = new ArrayList<>();
-        easeContactList.init(contactList);
-        registerForContextMenu(listView);
-
+        // 空白页面时显示的图标
         imageView = (ImageView) findViewById(R.id.image_add_contact);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
                 MenuItemCompat.expandActionView(searchMenuItem);
             }
         });
+    }
+
+    @Override protected void onPause() {
+        super.onPause();
+        searchView.clearFocus();
     }
 
     @Override protected void onNewIntent(Intent intent) {
@@ -115,33 +108,6 @@ public class HxSearchContactActivity extends AppCompatActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        if (v == listView) {
-            int position = ((AdapterView.AdapterContextMenuInfo) menuInfo).position;
-            Timber.d("onCreateContextMenu %d", position);
-
-            EaseUser easeUser = (EaseUser) listView.getItemAtPosition(position);
-
-            if (easeUser == null) return; // 长按HeaderView的情况
-
-            selectedHxId = easeUser.getUsername();
-            getMenuInflater().inflate(R.menu.activity_hx_search_contact_list, menu);
-        }
-    }
-
-    @Override public boolean onContextItemSelected(MenuItem item) {
-
-        if (item.getItemId() == R.id.menu_add_contact) {
-            searchView.clearFocus();
-            presenter.sendInvite(selectedHxId);
-            return true;
-        }
-        return super.onContextItemSelected(item);
     }
 
     @Override protected void onDestroy() {
@@ -177,11 +143,9 @@ public class HxSearchContactActivity extends AppCompatActivity
         progressBar.setVisibility(View.INVISIBLE);
     }
 
-    @Override public void showContacts(List<String> contacts) {
+    @Override public void showContacts(List<EaseUser> contacts) {
         contactList.clear();
-        for (String contact : contacts) {
-            contactList.add(new EaseUser(contact));
-        }
+        contactList.addAll(contacts);
         easeContactList.refresh();
     }
 
@@ -206,10 +170,54 @@ public class HxSearchContactActivity extends AppCompatActivity
     private void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+
             String query = intent.getStringExtra(SearchManager.QUERY);
             suggestions.saveRecentQuery(query, null);
             presenter.searchContact(query);
         }
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        //noinspection ConstantConditions
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void initContactList() {
+        // 初始化联系人列表
+        easeContactList = (EaseContactList) findViewById(R.id.ease_contact_list);
+
+        //noinspection ConstantConditions
+        listView = easeContactList.getListView();
+        contactList = new ArrayList<>();
+        easeContactList.init(contactList);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                EaseUser easeUser = (EaseUser) listView.getItemAtPosition(position);
+                if (easeUser == null) return; // 点击HeaderView的情况
+
+                showContactMenu(view, easeUser);
+            }
+        });
+    }
+
+    private void showContactMenu(View anchor, final EaseUser easeUser) {
+        PopupMenu popupMenu = new PopupMenu(this, anchor);
+        popupMenu.getMenuInflater()
+                .inflate(R.menu.activity_hx_search_contact_list, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.menu_add_contact) {
+                    presenter.sendInvite(easeUser.getUsername());
+                    return true;
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
     }
 
     private void initSearchView(final SearchView searchView) {
@@ -226,6 +234,7 @@ public class HxSearchContactActivity extends AppCompatActivity
                 cursor.moveToPosition(position);
                 String data = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_QUERY));
                 searchView.setQuery(data, false);
+                searchView.clearFocus();
                 return false;
             }
         });

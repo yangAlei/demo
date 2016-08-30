@@ -14,8 +14,10 @@ import com.hyphenate.easeui.ui.EaseBaiduMapActivity;
 
 /**
  * 用于{@link EaseBaiduMapActivity}。
+ * <p/>
+ * 在此模块提供同名布局：<b>ease_activity_baidumap.xml</b>，覆盖EaseUI的布局效果，从而替换地图界面的标题栏。
  */
-public class HxMapToolbar extends FrameLayout{
+public class HxMapToolbar extends FrameLayout {
     public HxMapToolbar(Context context) {
         this(context, null);
     }
@@ -30,14 +32,14 @@ public class HxMapToolbar extends FrameLayout{
     }
 
 
-    private void init(Context context){
+    private void init(Context context) {
         LayoutInflater.from(context)
                 .inflate(R.layout.partial_hx_map_toolbar, this, true);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new OnClickListener() {
             @Override public void onClick(View v) {
-                ((Activity)getContext()).finish();
+                ((Activity) getContext()).finish();
             }
         });
     }

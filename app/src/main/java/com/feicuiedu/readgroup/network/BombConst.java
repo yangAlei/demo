@@ -8,6 +8,7 @@ package com.feicuiedu.readgroup.network;
 interface BombConst {
 
     // 统一的Bomb请求头
+    String HEADER_SESSION_TOKEN = "X-Bmob-Session-Token";
     String HEADER_APPLICATION_ID = "X-Bmob-Application-Id";
     String HEADER_REST_API_KEY = "X-Bmob-REST-API-Key";
     String HEADER_CONTENT_TYPE = "Content-Type";
@@ -21,9 +22,13 @@ interface BombConst {
 
     String SEARCH_USER_URL = "http://cloud.bmob.cn/5a3f440fff51573e/searchUser/?query=%s";
 
+    String GET_USERS_URL = "http://cloud.bmob.cn/5a3f440fff51573e/getUser/?ids=%s";
+
+    String UPDATE_USER_URL = "https://api.bmob.cn/1/users/%s";
+
     String LOGIN_URL = "https://api.bmob.cn/1/login?username=%s&password=%s";
 
-
+    String UPLOAD_FILE_URL = "https://api.bmob.cn/2/files/avatar.jpeg";
 
 
 }

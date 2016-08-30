@@ -19,6 +19,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import timber.log.Timber;
 
+/**
+ * 此服务用来处理通知，和账号异地登录等异常情况
+ */
 public class HxMainService extends Service{
 
     @Nullable @Override public IBinder onBind(Intent intent) {
@@ -63,7 +66,10 @@ public class HxMainService extends Service{
 
     private void exit(){
         PackageManager pm = getPackageManager();
+
+        // 获取当前应用的启动Intent
         Intent intent = pm.getLaunchIntentForPackage(getPackageName());
+        // 清除所有的旧Activity
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

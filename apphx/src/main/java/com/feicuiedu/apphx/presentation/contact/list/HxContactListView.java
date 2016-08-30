@@ -1,6 +1,7 @@
 package com.feicuiedu.apphx.presentation.contact.list;
 
 import com.feicuiedu.apphx.basemvp.MvpView;
+import com.hyphenate.easeui.domain.EaseUser;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface HxContactListView extends MvpView{
     /**
      * @param contacts 环信Id的集合
      */
-    void setContacts(List<String> contacts);
+    void setContacts(List<EaseUser> contacts);
 
     /**
      * 刷新联系人列表
@@ -25,7 +26,7 @@ public interface HxContactListView extends MvpView{
     void showDeleteContactFail(String msg);
 
     HxContactListView NULL = new HxContactListView() {
-        @Override public void setContacts(List<String> contacts) {
+        @Override public void setContacts(List<EaseUser> contacts) {
         }
 
         @Override public void refreshContacts() {

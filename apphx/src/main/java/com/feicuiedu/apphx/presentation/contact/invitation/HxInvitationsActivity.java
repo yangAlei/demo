@@ -1,6 +1,7 @@
 package com.feicuiedu.apphx.presentation.contact.invitation;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,17 +32,11 @@ public class HxInvitationsActivity extends AppCompatActivity
         presenter.getInvites();
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override public void onContentChanged() {
         super.onContentChanged();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        ListView listView = (ListView) findViewById(R.id.list_invitations);
-        adapter = new HxInvitationsAdapter(this);
-        listView.setAdapter(adapter);
+        initToolbar();
+        initInvitationList();
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -59,11 +54,11 @@ public class HxInvitationsActivity extends AppCompatActivity
     }
 
     // start-interface: HxInvitationsAdapter.OnHandleInvitationListener
-    @Override public void onAccept(InviteMessage inviteMessage) {
+    @Override public void onAccept(@NonNull InviteMessage inviteMessage) {
         presenter.accept(inviteMessage);
     }
 
-    @Override public void onRefuse(InviteMessage inviteMessage) {
+    @Override public void onRefuse(@NonNull InviteMessage inviteMessage) {
         presenter.refuse(inviteMessage);
     } // end-interface: HxInvitationsAdapter.OnHandleInvitationListener
 
@@ -80,4 +75,21 @@ public class HxInvitationsActivity extends AppCompatActivity
     @Override public void showActionFail() {
         Toast.makeText(this, R.string.hx_contact_action_fail, Toast.LENGTH_SHORT).show();
     } // end-interface: HxInvitationsView
+
+    // 初始化Toolbar
+    private void initToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        //noinspection ConstantConditions
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    // 初始化邀请信息ListView
+    private void initInvitationList(){
+        ListView listView = (ListView) findViewById(R.id.list_invitations);
+        adapter = new HxInvitationsAdapter(this);
+        //noinspection ConstantConditions
+        listView.setAdapter(adapter);
+    }
+
 }

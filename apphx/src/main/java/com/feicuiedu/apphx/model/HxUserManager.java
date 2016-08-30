@@ -6,10 +6,12 @@ import com.feicuiedu.apphx.model.event.HxDisconnectEvent;
 import com.feicuiedu.apphx.model.event.HxErrorEvent;
 import com.feicuiedu.apphx.model.event.HxEventType;
 import com.feicuiedu.apphx.model.event.HxSimpleEvent;
+import com.feicuiedu.apphx.model.repository.ILocalUsersRepo;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.exceptions.HyphenateException;
 
 import org.greenrobot.eventbus.EventBus;
@@ -37,6 +39,8 @@ public class HxUserManager implements EMConnectionListener {
     private final EventBus eventBus;
     private final ExecutorService executorService;
 
+    private ILocalUsersRepo localUsersRepo;
+
     // 当前登录用户的环信Id
     private String currentUserId;
 
@@ -63,6 +67,10 @@ public class HxUserManager implements EMConnectionListener {
                 break;
         }
     } // end-interface: EMConnectionListener
+
+    public void init(ILocalUsersRepo localUsersRepo) {
+        this.localUsersRepo = localUsersRepo;
+    }
 
     public boolean isLogin() {
         // 返回是否登录过环信，登录成功后，只要没调logout方法，这个方法的返回值一直是true
@@ -98,21 +106,29 @@ public class HxUserManager implements EMConnectionListener {
     /**
      * 异步登录环信
      */
-    public void asyncLogin(@NonNull final String hxId, @NonNull final String password) {
+    public void asyncLogin(@NonNull final EaseUser easeUser, @NonNull final String password) {
+
+        final String hxId = easeUser.getUsername();
+        localUsersRepo.save(easeUser);
+
+        // Note: 如果登录成功，HxContactManager中EMContactListener的回调方法有可能在登录onSuccess回调方法之前调用！
+        setCurrentUserId(hxId);
         emClient.login(hxId, password, new EMCallBack() {
             @Override public void onSuccess() {
                 Timber.d("%s login success", hxId);
-                setCurrentUserId(hxId);
                 eventBus.post(new HxSimpleEvent(HxEventType.LOGIN));
             }
 
             @Override public void onError(int code, String message) {
                 Timber.d("%s login error, code is %s.", hxId, code);
                 eventBus.post(new HxErrorEvent(HxEventType.LOGIN, code, message));
+
+                setCurrentUserId(null);
             }
 
             /* no-op */
             @Override public void onProgress(int progress, String status) {
+                // Note: EMCallBack还用于环信日志上传，此方法在日志上传时才有意义。
             }
         });
     }
@@ -128,6 +144,17 @@ public class HxUserManager implements EMConnectionListener {
         executorService.submit(runnable);
     }
 
+    public void updateAvatar(String avatar) {
+        if (currentUserId == null) throw new RuntimeException();
+        EaseUser easeUser = localUsersRepo.getUser(currentUserId);
+
+        if (easeUser == null) throw new RuntimeException();
+
+        easeUser.setAvatar(avatar);
+        localUsersRepo.save(easeUser);
+
+    }
+
     private void setCurrentUserId(String hxId) {
         currentUserId = hxId;
 
@@ -137,5 +164,9 @@ public class HxUserManager implements EMConnectionListener {
             HxContactManager.getInstance().setCurrentUser(hxId);
         }
 
+    }
+
+    public String getCurrentUserId() {
+        return currentUserId;
     }
 }

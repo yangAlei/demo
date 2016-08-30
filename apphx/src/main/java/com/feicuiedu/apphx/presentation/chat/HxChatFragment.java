@@ -44,23 +44,6 @@ public class HxChatFragment extends EaseChatFragment implements EaseChatFragment
         hideSoftKeyboard();
     }
 
-    @Override protected void registerExtendMenuItem() {
-        // 替换EaseUI自带的图标
-        itemdrawables[0] = R.drawable.btn_capture_picture;
-        itemdrawables[1] = R.drawable.btn_select_picture;
-        itemdrawables[2] = R.drawable.btn_location;
-
-        // EaseUI已经设置了“相机”、“图片”和“位置”三个扩展菜单项
-        super.registerExtendMenuItem();
-
-        // 添加“视频通话”扩展菜单项
-        inputMenu.registerExtendMenuItem(
-                R.string.hx_chat_video_call,
-                R.drawable.btn_video_call,
-                ITEM_VIDEO_CALL,
-                extendMenuItemClickListener
-        );
-    }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -78,6 +61,27 @@ public class HxChatFragment extends EaseChatFragment implements EaseChatFragment
         }
 
         return true;
+    }
+
+    /**
+     * @see #onExtendMenuItemClick
+     */
+    @Override protected void registerExtendMenuItem() {
+        // 替换EaseUI自带的图标
+        itemdrawables[0] = R.drawable.btn_capture_picture;
+        itemdrawables[1] = R.drawable.btn_select_picture;
+        itemdrawables[2] = R.drawable.btn_location;
+
+        // EaseUI已经设置了“相机”、“图片”和“位置”三个扩展菜单项
+        super.registerExtendMenuItem();
+
+        // 添加“视频通话”扩展菜单项
+        inputMenu.registerExtendMenuItem(
+                R.string.hx_chat_video_call,
+                R.drawable.btn_video_call,
+                ITEM_VIDEO_CALL,
+                extendMenuItemClickListener
+        );
     }
 
     // start-interface: EaseChatFragment.EaseChatFragmentHelper

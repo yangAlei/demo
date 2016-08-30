@@ -23,4 +23,9 @@ public interface IRemoteUsersRepo {
     List<EaseUser> queryByName(String username) throws Exception;
 
 
+    /**
+     * 通过环信Id查询用户信息
+     */
+    @SuppressWarnings("UnusedParameters")
+    List<EaseUser> getUsers(List<String> ids) throws Exception;
 }

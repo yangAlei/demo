@@ -23,4 +23,8 @@ public class MockRemoteUsersRepo implements IRemoteUsersRepo{
         easeUsers.add(new EaseUser("rx"));
         return easeUsers;
     }
+
+    @Override public List<EaseUser> getUsers(List<String> ids) throws Exception {
+        return null;
+    }
 }

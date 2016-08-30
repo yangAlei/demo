@@ -1,6 +1,8 @@
 package com.feicuiedu.readgroup;
 
+import com.feicuiedu.readgroup.hx.RemoteUsersRepo;
 import com.feicuiedu.readgroup.network.BombClient;
+import com.feicuiedu.readgroup.network.entity.GetUsersResult;
 import com.feicuiedu.readgroup.network.entity.RegisterResult;
 import com.google.gson.Gson;
 
@@ -9,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -74,4 +77,17 @@ public class BombClientTest {
     public void searchUser() throws Exception {
         new RemoteUsersRepo().queryByName("yc");
     }
+
+    @Test
+    public void getUsers() throws Exception {
+        ArrayList<String> ids = new ArrayList<>();
+        ids.add("0bf45919f4");
+        Call call = bombClient.getGetUsersCall(ids);
+
+        Response response = call.execute();
+        GetUsersResult result = gson.fromJson(response.body().string(), GetUsersResult.class);
+
+        Timber.d(result.getData().get(0).getObjectId());
+    }
+
 }

@@ -1,22 +1,20 @@
-package com.feicuiedu.readgroup;
+package com.feicuiedu.readgroup.hx;
 
 
 import com.feicuiedu.apphx.model.repository.IRemoteUsersRepo;
 import com.feicuiedu.readgroup.network.BombClient;
+import com.feicuiedu.readgroup.network.entity.GetUsersResult;
 import com.feicuiedu.readgroup.network.entity.SearchUserResult;
-import com.feicuiedu.readgroup.network.entity.UserEntity;
 import com.google.gson.Gson;
 import com.hyphenate.easeui.domain.EaseUser;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Response;
 import timber.log.Timber;
 
-class RemoteUsersRepo implements IRemoteUsersRepo{
+public class RemoteUsersRepo implements IRemoteUsersRepo{
 
     private final BombClient bombClient;
     private final Gson gson;
@@ -47,25 +45,29 @@ class RemoteUsersRepo implements IRemoteUsersRepo{
         }
 
 
-        return convertAll(result.getData());
+        return UserConverter.convertAll(result.getData());
     }
 
-    private List<EaseUser> convertAll(List<UserEntity> users) {
+    @Override public List<EaseUser> getUsers(List<String> ids) throws Exception {
 
-        if (users == null) {
-            return Collections.emptyList();
+        Call call = bombClient.getGetUsersCall(ids);
+
+        Response response = call.execute();
+
+        if (!response.isSuccessful()) {
+            throw new Exception(response.body().string());
         }
 
-        ArrayList<EaseUser> easeUsers = new ArrayList<>();
-        for (UserEntity userEntity : users) {
-            easeUsers.add(convert(userEntity));
-        }
-        return easeUsers;
-    }
+        String content = response.body().string();
 
-    private EaseUser convert(UserEntity userEntity){
-        EaseUser easeUser = new EaseUser(userEntity.getObjectId());
-        easeUser.setNick(userEntity.getUsername());
-        return easeUser;
+        Timber.d(content);
+        GetUsersResult result = gson.fromJson(content, GetUsersResult.class);
+
+        if (!result.isSuccess()) {
+            throw new Exception(result.getError());
+        }
+
+
+        return UserConverter.convertAll(result.getData());
     }
 }

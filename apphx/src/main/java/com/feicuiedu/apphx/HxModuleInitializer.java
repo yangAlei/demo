@@ -1,6 +1,9 @@
 package com.feicuiedu.apphx;
 
 
+import android.support.annotation.NonNull;
+
+import com.feicuiedu.apphx.easeui.HxUserProfileProvider;
 import com.feicuiedu.apphx.model.HxContactManager;
 import com.feicuiedu.apphx.model.HxMessageManager;
 import com.feicuiedu.apphx.model.HxUserManager;
@@ -8,6 +11,11 @@ import com.feicuiedu.apphx.model.repository.ILocalInviteRepo;
 import com.feicuiedu.apphx.model.repository.ILocalUsersRepo;
 import com.feicuiedu.apphx.model.repository.IRemoteUsersRepo;
 
+/**
+ * AppHx模块的初始化工具。在{@link HxBaseApplication#initHxModule(HxModuleInitializer)}中使用。
+ * <p/>
+ * 它负责将{@link ILocalUsersRepo}等接口的实现注入到相关的类中。
+ */
 public class HxModuleInitializer {
 
     private static HxModuleInitializer sInstance;
@@ -28,38 +36,39 @@ public class HxModuleInitializer {
 
     private ILocalInviteRepo localInviteMessageRepo;
 
-    public HxModuleInitializer setRemoteUsersRepo(IRemoteUsersRepo remoteUsersRepo) {
+    public HxModuleInitializer setRemoteUsersRepo(@NonNull IRemoteUsersRepo remoteUsersRepo) {
         this.remoteUsersRepo = remoteUsersRepo;
         return this;
     }
 
-    public HxModuleInitializer setLocalUsersRepo(ILocalUsersRepo localUsersRepo) {
+    public HxModuleInitializer setLocalUsersRepo(@NonNull ILocalUsersRepo localUsersRepo) {
         this.localUsersRepo = localUsersRepo;
         return this;
     }
 
-    public HxModuleInitializer setLocalInviteRepo(ILocalInviteRepo localInviteMessageRepo) {
+    public HxModuleInitializer setLocalInviteRepo(@NonNull ILocalInviteRepo localInviteMessageRepo) {
         this.localInviteMessageRepo = localInviteMessageRepo;
         return this;
     }
 
     public void init() {
 
-        if (remoteUsersRepo == null) {
-            throw new RuntimeException("Must set remoteUsersRepo before init!");
-        }
+        Preconditions.checkNotNull(remoteUsersRepo, "Must set remoteUsersRepo before init!");
+        Preconditions.checkNotNull(localInviteMessageRepo, "Must set localInviteMessageRepo before init!");
+        Preconditions.checkNotNull(localUsersRepo, "Must set localUsersRepo before init!");
 
-        if (localUsersRepo == null) {
-            throw new RuntimeException("Must set localUsersRepo before init!");
-        }
-
-        HxUserManager.getInstance();
+        HxUserManager.getInstance()
+                .init(localUsersRepo);
 
         HxContactManager.getInstance()
                 .initLocalUsersRepo(localUsersRepo)
                 .initRemoteUsersRepo(remoteUsersRepo)
                 .initLocalInviteRepo(localInviteMessageRepo);
 
-        HxMessageManager.getInstance();
+        HxMessageManager.getInstance()
+                .init(localUsersRepo);
+
+        HxUserProfileProvider.getInstance()
+                .init(localUsersRepo);
     }
 }

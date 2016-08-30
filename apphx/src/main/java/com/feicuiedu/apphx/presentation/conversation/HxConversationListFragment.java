@@ -12,13 +12,17 @@ import android.widget.AdapterView;
 import com.feicuiedu.apphx.R;
 import com.feicuiedu.apphx.presentation.chat.HxChatActivity;
 import com.hyphenate.chat.EMConversation;
-import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.ui.EaseConversationListFragment;
 
 /**
- * 环信会话列表页面
+ * 环信会话列表页面。
+ * <p/>
+ * 此页面无需设置数据，直接调用{@link #refreshConversations()}方法，会刷新显示最新的会话列表数据。
+ * 但会话数据发生变更时，此方法不会自动触发，需要主动来调用。
+ * <p/>
+ * 会话上的未读消息数也是由父类{@link EaseConversationListFragment}自动处理的。
  */
-public class HxConversationListFragment extends EaseConversationListFragment implements HxConversationListView{
+public class HxConversationListFragment extends EaseConversationListFragment implements HxConversationListView {
 
 
     private HxConversationListPresenter presenter;
@@ -29,7 +33,7 @@ public class HxConversationListFragment extends EaseConversationListFragment imp
         // 此方法要在 onActivityCreated 之前调用才有效
         setConversationListItemClickListener(new EaseConversationListItemClickListener() {
             @Override public void onListItemClicked(EMConversation conversation) {
-                Intent intent = HxChatActivity.getStartIntent(getContext(), EaseConstant.CHATTYPE_SINGLE, conversation.getUserName());
+                Intent intent = HxChatActivity.getStartIntent(getContext(), conversation.getUserName());
                 startActivity(intent);
             }
         });
@@ -53,6 +57,12 @@ public class HxConversationListFragment extends EaseConversationListFragment imp
     @Override public void onDestroy() {
         super.onDestroy();
         presenter.onDestroy();
+    }
+
+    @Override protected void setUpView() {
+        // EaseUI的bug
+        conversationList.clear();
+        super.setUpView();
     }
 
     @Override
@@ -89,7 +99,7 @@ public class HxConversationListFragment extends EaseConversationListFragment imp
     }
 
     @SuppressWarnings({"deprecation", "ConstantConditions"})
-    private void customUi(){
+    private void customUi() {
         hideTitleBar();
 
         registerForContextMenu(conversationListView);

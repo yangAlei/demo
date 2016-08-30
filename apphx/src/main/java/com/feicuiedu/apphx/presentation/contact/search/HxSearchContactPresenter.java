@@ -27,7 +27,7 @@ public class HxSearchContactPresenter extends MvpPresenter<HxSearchContactView> 
 
     public void searchContact(String query) {
         getView().startLoading();
-        hxContactManager.searchContacts(query);
+        hxContactManager.asyncSearchContacts(query);
     }
 
     public void sendInvite(String toHxId) {
@@ -39,7 +39,7 @@ public class HxSearchContactPresenter extends MvpPresenter<HxSearchContactView> 
         }
 
         getView().startLoading();
-        hxContactManager.sendInvite(toHxId);
+        hxContactManager.asyncSendInvite(toHxId);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -48,6 +48,10 @@ public class HxSearchContactPresenter extends MvpPresenter<HxSearchContactView> 
 
         if (event.isSuccess) {
             getView().showContacts(event.contacts);
+
+            if (event.contacts.size() == 0) {
+                getView().showSearchError("No match result!");
+            }
         } else {
             getView().showSearchError(event.errorMessage);
         }

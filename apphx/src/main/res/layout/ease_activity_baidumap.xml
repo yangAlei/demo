@@ -27,6 +27,7 @@
             android:textSize="@dimen/font_16"/>
     </com.feicuiedu.apphx.presentation.chat.map.HxMapToolbar>
 
+    <!-- 以下是EaseUI中的原始布局 -->
     <!-- <RelativeLayout
         android:id="@+id/title"
         android:layout_width="match_parent"

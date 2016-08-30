@@ -25,6 +25,7 @@ public class HxConversationListPresenter extends MvpPresenter<HxConversationList
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(HxNewMsgEvent event) {
+        // 收到新消息时，自动刷新会话列表
         getView().refreshConversations();
     }
 }

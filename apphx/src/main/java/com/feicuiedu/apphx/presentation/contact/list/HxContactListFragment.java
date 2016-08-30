@@ -15,7 +15,6 @@ import com.feicuiedu.apphx.R;
 import com.feicuiedu.apphx.presentation.chat.HxChatActivity;
 import com.feicuiedu.apphx.presentation.contact.invitation.HxInvitationsActivity;
 import com.feicuiedu.apphx.presentation.contact.search.HxSearchContactActivity;
-import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.ui.EaseContactListFragment;
 
@@ -38,7 +37,7 @@ public class HxContactListFragment extends EaseContactListFragment implements Hx
         // 此方法要在 onActivityCreated 之前调用才有效
         setContactListItemClickListener(new EaseContactListItemClickListener() {
             @Override public void onListItemClicked(EaseUser user) {
-                Intent intent = HxChatActivity.getStartIntent(getContext(), EaseConstant.CHATTYPE_SINGLE, user.getUsername());
+                Intent intent = HxChatActivity.getStartIntent(getContext(), user.getUsername());
                 startActivity(intent);
             }
         });
@@ -64,6 +63,10 @@ public class HxContactListFragment extends EaseContactListFragment implements Hx
             int position = ((AdapterView.AdapterContextMenuInfo) menuInfo).position;
             Timber.d("onCreateContextMenu %d", position);
 
+            // Note: 此处不能使用listView.getAdapter().getItem(position) ---
+            // 在有HeaderView的情况下，ListView真正使用的适配器是HeaderViewListAdapter；
+            // 因此，这里的position和我们的适配器中的position不同；
+            // 另一种可行的写法是listView.getAdapter().getItem(position - listView.getHeaderViewsCount())。
             EaseUser easeUser = (EaseUser) listView.getItemAtPosition(position);
 
             if (easeUser == null) return; // 长按HeaderView的情况
@@ -94,11 +97,12 @@ public class HxContactListFragment extends EaseContactListFragment implements Hx
     }
 
     // start-interface: HxContactListView
-    @Override public void setContacts(List<String> contacts) {
+    @Override public void setContacts(List<EaseUser> contacts) {
         HashMap<String, EaseUser> contactsMap = new HashMap<>();
         contactsMap.clear();
-        for (String contact : contacts) {
-            contactsMap.put(contact, new EaseUser(contact));
+
+        for (EaseUser easeUser : contacts) {
+            contactsMap.put(easeUser.getUsername(), easeUser);
         }
         setContactsMap(contactsMap);
     }
@@ -114,19 +118,22 @@ public class HxContactListFragment extends EaseContactListFragment implements Hx
 
 
     // 自定制UI
-    @SuppressWarnings({"deprecation", "ConstantConditions"})
     private void customUi() {
         // 隐藏EaseUI自定义的标题栏
         hideTitleBar();
+
+        // 联系人列表上下菜单 -- 长按弹出“删除联系人”
         registerForContextMenu(listView);
 
-        clearSearch.setImageResource(R.drawable.hx_btn_clear_search); // 按钮: 清除搜索内容
+        // 设置搜索相关控件
+        setSearchWidget();
 
-        Drawable searchIcon = getResources().getDrawable(R.drawable.hx_ic_search_accent);
-        searchIcon.setBounds(0, 0, searchIcon.getIntrinsicWidth(), searchIcon.getIntrinsicHeight());
-        query.setCompoundDrawables(searchIcon, null, null, null); // 设置查询编辑框左侧的图标
+        // 设置联系人列表的HeaderView
+        setHeaderView();
+    }
 
-        // 设置ListView的Header
+    // 设置联系人列表的HeaderView
+    private void setHeaderView(){
         View headerView = LayoutInflater.from(getContext())
                 .inflate(R.layout.partial_hx_contact_list_header, listView, false);
 
@@ -149,7 +156,16 @@ public class HxContactListFragment extends EaseContactListFragment implements Hx
         });
 
         listView.addHeaderView(headerView);
+    }
 
+    // 设置搜索相关控件
+    @SuppressWarnings({"deprecation", "ConstantConditions"})
+    private void setSearchWidget(){
+        clearSearch.setImageResource(R.drawable.hx_btn_clear_search); // 按钮: 清除搜索内容
+
+        Drawable searchIcon = getResources().getDrawable(R.drawable.hx_ic_search_accent);
+        searchIcon.setBounds(0, 0, searchIcon.getIntrinsicWidth(), searchIcon.getIntrinsicHeight());
+        query.setCompoundDrawables(searchIcon, null, null, null); // 设置查询编辑框左侧的图标
     }
 
 }

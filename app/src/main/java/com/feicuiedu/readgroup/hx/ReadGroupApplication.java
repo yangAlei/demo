@@ -1,4 +1,4 @@
-package com.feicuiedu.readgroup;
+package com.feicuiedu.readgroup.hx;
 
 
 import com.feicuiedu.apphx.HxBaseApplication;

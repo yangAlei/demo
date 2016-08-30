@@ -8,8 +8,10 @@ import com.feicuiedu.apphx.model.HxUserManager;
 import com.feicuiedu.apphx.model.event.HxErrorEvent;
 import com.feicuiedu.apphx.model.event.HxEventType;
 import com.feicuiedu.apphx.model.event.HxSimpleEvent;
+import com.feicuiedu.readgroup.hx.UserConverter;
 import com.feicuiedu.readgroup.network.BombClient;
 import com.feicuiedu.readgroup.network.event.LoginEvent;
+import com.hyphenate.easeui.domain.EaseUser;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -33,7 +35,10 @@ class LoginPresenter extends MvpPresenter<LoginView> {
     public void onEvent(LoginEvent event) {
         if (event.success) {
             // 如果登录应用服务器成功，需要再登录环信服务器
-            HxUserManager.getInstance().asyncLogin(event.result.getObjectId(), password);
+            EaseUser easeUser = UserConverter.convert(event.result);
+
+            HxUserManager.getInstance()
+                    .asyncLogin(easeUser, password);
         } else {
             this.password = null;
             getView().stopLoading();

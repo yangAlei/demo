@@ -33,11 +33,11 @@ public class HxInvitationsPresenter extends MvpPresenter<HxInvitationsView> {
     }
 
     public void accept(InviteMessage invite) {
-        hxContactManager.acceptInvite(invite);
+        hxContactManager.asyncAcceptInvite(invite);
     }
 
     public void refuse(InviteMessage invite) {
-        hxContactManager.refuseInvite(invite);
+        hxContactManager.asyncRefuseInvite(invite);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -49,6 +49,7 @@ public class HxInvitationsPresenter extends MvpPresenter<HxInvitationsView> {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(HxSimpleEvent event) {
         if (event.type == HxEventType.ACCEPT_INVITE || event.type == HxEventType.REFUSE_INVITE) {
+            // 同意或拒绝邀请成功
             getView().refreshInvitations();
         }
     }
@@ -56,6 +57,7 @@ public class HxInvitationsPresenter extends MvpPresenter<HxInvitationsView> {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(HxErrorEvent event) {
         if (event.type == HxEventType.ACCEPT_INVITE || event.type == HxEventType.REFUSE_INVITE) {
+            // 同意或拒绝邀请失败
             getView().showActionFail();
         }
     }

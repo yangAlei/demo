@@ -20,11 +20,11 @@ public class HxContactListPresenter extends MvpPresenter<HxContactListView> {
     }
 
     public void getContacts() {
-        HxContactManager.getInstance().getContacts();
+        HxContactManager.getInstance().retrieveContacts();
     }
 
     public void deleteContact(String hxId) {
-        HxContactManager.getInstance().deleteContact(hxId);
+        HxContactManager.getInstance().asyncDeleteContact(hxId);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

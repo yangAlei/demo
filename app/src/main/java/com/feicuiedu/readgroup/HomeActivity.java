@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.feicuiedu.apphx.presentation.contact.list.HxContactListFragment;
 import com.feicuiedu.apphx.presentation.conversation.HxConversationListFragment;
 import com.feicuiedu.readgroup.books.BooksFragment;
+import com.feicuiedu.readgroup.user.user.UserFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,7 +39,7 @@ public class HomeActivity extends AppCompatActivity implements ViewPager.OnPageC
                 case 2:
                     return new HxConversationListFragment();
                 case 3:
-                    return new BooksFragment();
+                    return new UserFragment();
                 default:
                     throw new RuntimeException();
             }

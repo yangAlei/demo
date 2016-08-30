@@ -28,6 +28,7 @@ public final class HxErrorEvent {
         this.errorMessage = e.getDescription();
     }
 
+    @SuppressWarnings("SameParameterValue")
     public HxErrorEvent(HxEventType type, int errorCode, String errorMessage) {
         this.type = type;
         this.errorCode = errorCode;
