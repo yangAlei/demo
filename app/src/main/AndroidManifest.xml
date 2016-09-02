@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:name">
 
-        <activity android:name=".SplashActivity"
+        <activity android:name=".presentation.SplashActivity"
                   android:screenOrientation="portrait"
                   android:theme="@style/SplashTheme">
             <intent-filter>
@@ -20,10 +20,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".HomeActivity"
+        <activity android:name=".presentation.HomeActivity"
                   android:windowSoftInputMode="stateAlwaysHidden"/>
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
+
+        <activity android:name=".presentation.books.bookinfo.BookInfoActivity"/>
 
     </application>
 

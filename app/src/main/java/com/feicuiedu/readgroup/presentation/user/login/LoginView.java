@@ -1,4 +1,4 @@
-package com.feicuiedu.readgroup.user.login;
+package com.feicuiedu.readgroup.presentation.user.login;
 
 
 import com.feicuiedu.apphx.basemvp.MvpView;

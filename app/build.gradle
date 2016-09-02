@@ -49,4 +49,5 @@ dependencies {
     compile 'com.soundcloud.android:android-crop:1.0.1@aar'
     compile project(':apphx')
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
 }

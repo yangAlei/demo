@@ -335,6 +335,17 @@ public class HxContactManager implements EMConnectionListener, EMContactListener
         return contacts;
     }
 
+    public boolean isContact(String hxId) {
+
+        return contacts != null && contacts.contains(hxId);
+
+    }
+
+
+    public EaseUser getUser(String hxId){
+        return localUsersRepo.getUser(hxId);
+    }
+
     private void asyncGetContactsFromServer() {
         Runnable runnable = new Runnable() {
             @Override public void run() {
@@ -376,6 +387,8 @@ public class HxContactManager implements EMConnectionListener, EMContactListener
 
                 // 发送刷新联系人事件
                 eventBus.post(new HxRefreshContactEvent(currentContacts));
+
+                if (noInfoContacts.size() == 0) return;
 
                 try {
 

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import com.feicuiedu.apphx.R;
@@ -155,7 +156,11 @@ public class HxContactListFragment extends EaseContactListFragment implements Hx
             }
         });
 
+        ListAdapter adapter = listView.getAdapter();
+        listView.setAdapter(null);
+        // note: 在Android4.4之前，此方法只能在ListView设置适配器之前调用。
         listView.addHeaderView(headerView);
+        listView.setAdapter(adapter);
     }
 
     // 设置搜索相关控件

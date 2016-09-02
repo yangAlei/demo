@@ -1,4 +1,4 @@
-package com.feicuiedu.readgroup.user.login;
+package com.feicuiedu.readgroup.presentation.user.login;
 
 
 import android.content.Intent;
@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.feicuiedu.readgroup.HomeActivity;
+import com.feicuiedu.readgroup.presentation.HomeActivity;
 import com.feicuiedu.readgroup.R;
 
 import butterknife.BindView;

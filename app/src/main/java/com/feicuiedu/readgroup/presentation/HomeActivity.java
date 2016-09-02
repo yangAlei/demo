@@ -1,4 +1,4 @@
-package com.feicuiedu.readgroup;
+package com.feicuiedu.readgroup.presentation;
 
 
 import android.os.Bundle;
@@ -12,8 +12,9 @@ import android.widget.TextView;
 
 import com.feicuiedu.apphx.presentation.contact.list.HxContactListFragment;
 import com.feicuiedu.apphx.presentation.conversation.HxConversationListFragment;
-import com.feicuiedu.readgroup.books.BooksFragment;
-import com.feicuiedu.readgroup.user.user.UserFragment;
+import com.feicuiedu.readgroup.R;
+import com.feicuiedu.readgroup.presentation.books.booklist.BooksFragment;
+import com.feicuiedu.readgroup.presentation.user.user.UserFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

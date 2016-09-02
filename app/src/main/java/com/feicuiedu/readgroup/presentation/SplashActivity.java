@@ -1,4 +1,4 @@
-package com.feicuiedu.readgroup;
+package com.feicuiedu.readgroup.presentation;
 
 
 import android.content.Intent;
@@ -7,8 +7,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.feicuiedu.apphx.model.HxUserManager;
-import com.feicuiedu.readgroup.user.login.LoginFragment;
-import com.feicuiedu.readgroup.user.register.RegisterFragment;
+import com.feicuiedu.readgroup.R;
+import com.feicuiedu.readgroup.presentation.user.login.LoginFragment;
+import com.feicuiedu.readgroup.presentation.user.register.RegisterFragment;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;

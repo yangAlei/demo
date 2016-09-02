@@ -1,4 +1,4 @@
-package com.feicuiedu.readgroup.user.register;
+package com.feicuiedu.readgroup.presentation.user.register;
 
 
 import android.os.Bundle;

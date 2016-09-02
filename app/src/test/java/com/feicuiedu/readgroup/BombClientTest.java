@@ -2,6 +2,9 @@ package com.feicuiedu.readgroup;
 
 import com.feicuiedu.readgroup.hx.RemoteUsersRepo;
 import com.feicuiedu.readgroup.network.BombClient;
+import com.feicuiedu.readgroup.network.entity.BookEntity;
+import com.feicuiedu.readgroup.network.entity.BookInfoResult;
+import com.feicuiedu.readgroup.network.entity.BookResult;
 import com.feicuiedu.readgroup.network.entity.GetUsersResult;
 import com.feicuiedu.readgroup.network.entity.RegisterResult;
 import com.google.gson.Gson;
@@ -43,7 +46,7 @@ public class BombClientTest {
     @Test
     public void register() {
 
-        Call call = bombClient.getRegisterCall("yc", "123");
+        Call call = bombClient.getRegisterCall("test1", "123");
         try {
             Response response = call.execute();
             Timber.d("code: %d",  response.code());
@@ -82,12 +85,55 @@ public class BombClientTest {
     public void getUsers() throws Exception {
         ArrayList<String> ids = new ArrayList<>();
         ids.add("0bf45919f4");
+        ids.add("2569ef38dc");
         Call call = bombClient.getGetUsersCall(ids);
 
         Response response = call.execute();
         GetUsersResult result = gson.fromJson(response.body().string(), GetUsersResult.class);
 
         Timber.d(result.getData().get(0).getObjectId());
+    }
+
+    @Test
+    public void getBooks() throws Exception {
+        Call call = bombClient.getBooksCall();
+
+        Response response = call.execute();
+
+        String content = response.body().string();
+
+        Timber.d(content);
+
+        BookResult bookResult = gson.fromJson(content, BookResult.class);
+
+        for (BookEntity bookEntity : bookResult.getData()) {
+            Timber.d(bookEntity == null? "null" : bookEntity.toString());
+        }
+    }
+
+    @Test
+    public void getBookInfo() throws Exception {
+        Call call = bombClient.getBookInfoCall("677ab0ba0f");
+
+        Response response = call.execute();
+        String content = response.body().string();
+        BookInfoResult bookInfoResult = gson.fromJson(content, BookInfoResult.class);
+
+        Timber.d(bookInfoResult.getData().getBook().toString());
+    }
+
+    @Test
+    public void likeBook() throws Exception {
+        Call call = bombClient.getBookLikeCall("677ab0ba0f", "0bf45919f4", true);
+        Response response = call.execute();
+        Timber.d(response.body().string());
+    }
+
+    @Test
+    public void getUserLikes() throws Exception {
+        Call call = bombClient.getUserLikesCall("0bf45919f4");
+        Response response = call.execute();
+        Timber.d(response.body().string());
     }
 
 }

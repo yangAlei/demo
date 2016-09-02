@@ -8,11 +8,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 
 import com.feicuiedu.apphx.Preconditions;
 import com.feicuiedu.apphx.R;
+import com.feicuiedu.apphx.model.HxContactManager;
 import com.hyphenate.easeui.EaseConstant;
+import com.hyphenate.easeui.controller.EaseUI;
+import com.hyphenate.easeui.domain.EaseUser;
 
 /**
  * 聊天Activity，此Activity是一个简单的Toolbar + Fragment结构，主要功能由
@@ -36,6 +40,12 @@ public class HxChatActivity extends AppCompatActivity {
         // Note: 设置聊天类型，我们这里只处理了单聊，没有处理群组和聊天室的情况。
         intent.putExtra(EaseConstant.EXTRA_CHAT_TYPE, EaseConstant.CHATTYPE_SINGLE);
         intent.putExtra(EaseConstant.EXTRA_USER_ID, chatId);
+
+        // 一旦进入聊天页面，就取消通知栏通知
+        EaseUI.getInstance()
+                .getNotifier()
+                .reset();
+
         return intent;
     }
 
@@ -65,6 +75,16 @@ public class HxChatActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        String chatId = getIntent().getStringExtra(EaseConstant.EXTRA_USER_ID);
+        EaseUser easeUser = HxContactManager.getInstance()
+                .getUser(chatId);
+
+        String title = easeUser.getNick();
+        if (!TextUtils.isEmpty(title)) {
+            getSupportActionBar().setTitle(title);
+        }
+
     }
 
     // 添加聊天Fragment
