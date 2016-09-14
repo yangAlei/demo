@@ -19,7 +19,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.util.List;
 
-public class UserPresenter extends MvpPresenter<UserView>{
+class UserPresenter extends MvpPresenter<UserView>{
 
     private final BombClient bombClient;
     private final HxUserManager hxUserManager;

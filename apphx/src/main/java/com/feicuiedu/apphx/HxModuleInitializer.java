@@ -4,6 +4,7 @@ package com.feicuiedu.apphx;
 import android.support.annotation.NonNull;
 
 import com.feicuiedu.apphx.easeui.HxUserProfileProvider;
+import com.feicuiedu.apphx.model.HxCallManager;
 import com.feicuiedu.apphx.model.HxContactManager;
 import com.feicuiedu.apphx.model.HxMessageManager;
 import com.feicuiedu.apphx.model.HxUserManager;
@@ -70,5 +71,7 @@ public class HxModuleInitializer {
 
         HxUserProfileProvider.getInstance()
                 .init(localUsersRepo);
+
+        HxCallManager.getInstance();
     }
 }

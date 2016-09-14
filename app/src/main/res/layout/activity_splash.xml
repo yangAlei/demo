@@ -14,7 +14,6 @@
         android:src="@drawable/splash_logo"/>
 
     <TextView
-        android:id="@+id/text_slogan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/image_logo"

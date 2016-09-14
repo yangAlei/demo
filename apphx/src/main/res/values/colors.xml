@@ -6,4 +6,6 @@
 
     <color name="grey">#FF999999</color>
     <color name="translucent">#20000000</color>
+    <color name="spruce">#FF252C39</color>
+    <color name="pale_white">#FFBABABA</color>
 </resources>

@@ -19,7 +19,7 @@ import com.feicuiedu.readgroup.network.event.GetBookInfoEvent;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class BookInfoPresenter extends MvpPresenter<BookInfoView> {
+class BookInfoPresenter extends MvpPresenter<BookInfoView> {
 
 
     @NonNull @Override protected BookInfoView getNullObject() {

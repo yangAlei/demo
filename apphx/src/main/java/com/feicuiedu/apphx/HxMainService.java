@@ -2,6 +2,7 @@ package com.feicuiedu.apphx;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -9,7 +10,9 @@ import android.widget.Toast;
 
 import com.feicuiedu.apphx.model.event.HxDisconnectEvent;
 import com.feicuiedu.apphx.model.event.HxNewMsgEvent;
+import com.feicuiedu.apphx.presentation.call.CallReceiver;
 import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.controller.EaseUI;
 
@@ -24,6 +27,8 @@ import timber.log.Timber;
  */
 public class HxMainService extends Service{
 
+    private CallReceiver callReceiver;
+
     @Nullable @Override public IBinder onBind(Intent intent) {
         return null;
     }
@@ -31,7 +36,9 @@ public class HxMainService extends Service{
     @Override public void onCreate() {
         super.onCreate();
         EventBus.getDefault().register(this);
+        registerCallReceiver();
     }
+
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
         return Service.START_STICKY;
@@ -40,6 +47,7 @@ public class HxMainService extends Service{
     @Override public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        unregisterReceiver(callReceiver);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -57,7 +65,6 @@ public class HxMainService extends Service{
     public void onEvent(HxNewMsgEvent event){
 
         Timber.d("HxNewMsgEvent");
-        Toast.makeText(this, "notify", Toast.LENGTH_SHORT).show();
 
         for (EMMessage message : event.list) {
             EaseUI.getInstance().getNotifier().onNewMsg(message);
@@ -74,5 +81,10 @@ public class HxMainService extends Service{
         startActivity(intent);
     }
 
-
+    private void registerCallReceiver() {
+        callReceiver = new CallReceiver();
+        String callAction = EMClient.getInstance().callManager().getIncomingCallBroadcastAction();
+        IntentFilter filter = new IntentFilter(callAction);
+        registerReceiver(callReceiver, filter);
+    }
 }

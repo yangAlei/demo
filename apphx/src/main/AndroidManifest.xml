@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- *********环信需要的权限:结束********* -->
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:name=".HxBaseApplication"
         android:label="@string/app_name">
@@ -66,6 +67,9 @@
             android:name="com.hyphenate.easeui.ui.EaseShowBigImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"/>
+
+        <activity android:name=".presentation.call.voice.HxVoiceCallActivity"
+                  android:screenOrientation="portrait"/>
 
         <!-- *********地图相关功能:开始********* -->
         <!-- 地图页面，用于分享位置-->

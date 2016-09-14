@@ -13,7 +13,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-public class BooksPresenter extends MvpPresenter<BooksView>{
+class BooksPresenter extends MvpPresenter<BooksView>{
 
 
     private List<BookEntity> books;

@@ -1,6 +1,7 @@
 package com.feicuiedu.apphx.presentation.chat;
 
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.feicuiedu.apphx.R;
+import com.feicuiedu.apphx.presentation.call.voice.HxVoiceCallActivity;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.ui.EaseChatFragment;
@@ -34,6 +36,7 @@ public class HxChatFragment extends EaseChatFragment implements EaseChatFragment
         return chatFragment;
     }
 
+
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         customUi();
@@ -53,7 +56,9 @@ public class HxChatFragment extends EaseChatFragment implements EaseChatFragment
 
     @Override public boolean onContextItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_audio_call) {
-            // TODO: 语音通话功能
+            String hxId = getArguments().getString(EaseConstant.EXTRA_USER_ID);
+            Intent voiceCall = HxVoiceCallActivity.getStartIntent(getContext(), hxId, false);
+            startActivity(voiceCall);
         } else if (item.getItemId() == R.id.menu_video_call) {
             // TODO: 视频通话功能
         } else {
